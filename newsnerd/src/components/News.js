@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import NewsItem from "./NewsItem";
+import Spinner from "./Spinner";
 
 export class News extends Component {
   constructor() {
@@ -14,8 +15,7 @@ export class News extends Component {
   // Creating a life cycle method
 
   async componentDidMount() {
-    let url =
-      "https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=1pageSize=20";
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=1&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
@@ -29,7 +29,7 @@ export class News extends Component {
   handlePrevClick = async () => {
     let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=${
       this.state.page - 1
-    }&pageSize=20`;
+    }&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
@@ -43,11 +43,13 @@ export class News extends Component {
 
   // Handle next click
   handleNextClick = async () => {
-    if (this.state.page > Math.ceil(this.totalResults / 20)) {
+    if (
+      this.state.page > Math.ceil(this.state.totalResults / this.props.pageSize)
+    ) {
     } else {
       let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=${
         this.state.page + 1
-      }&pageSize=20`;
+      }&pageSize=${this.props.pageSize}`;
       let data = await fetch(url);
       let parsedData = await data.json();
       console.log(parsedData);
@@ -64,7 +66,8 @@ export class News extends Component {
     return (
       <>
         <div className="container my-3">
-          <h2>News Monkey - Top Headlines</h2>
+          <h1 className="text-center">News Nerd - Top Headlines</h1>
+          {this.state.loader && <Spinner />}
           <div className="row">
             {this.state.articles.map((element) => {
               return (
@@ -88,14 +91,18 @@ export class News extends Component {
             <button
               disabled={this.state.page <= 1}
               type="button"
-              class="btn btn-dark"
+              className="btn btn-dark"
               onClick={this.handlePrevClick}
             >
               &larr; Previous
             </button>
             <button
+              disabled={
+                this.state.page >
+                Math.ceil(this.totalResults / this.props.pageSize)
+              }
               type="button"
-              class="btn btn-dark"
+              className="btn btn-dark"
               onClick={this.handleNextClick}
             >
               Next &rarr;
