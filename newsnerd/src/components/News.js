@@ -6,6 +6,8 @@ export class News extends Component {
     super();
     this.state = {
       articles: [],
+      loading: false,
+      page: 1,
     };
   }
 
@@ -13,12 +15,49 @@ export class News extends Component {
 
   async componentDidMount() {
     let url =
-      "https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d";
+      "https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=1pageSize=20";
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
-    this.setState({ articles: parsedData.articles });
+    this.setState({
+      articles: parsedData.articles,
+      totalResults: parsedData.totalResults,
+    });
   }
+
+  // Handle previous click
+  handlePrevClick = async () => {
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=${
+      this.state.page - 1
+    }&pageSize=20`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    console.log(parsedData);
+
+    this.setState({
+      page: this.state.page - 1,
+      articles: parsedData.articles,
+    });
+    console.log("Previous");
+  };
+
+  // Handle next click
+  handleNextClick = async () => {
+    if (this.state.page > Math.ceil(this.totalResults / 20)) {
+    } else {
+      let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=${
+        this.state.page + 1
+      }&pageSize=20`;
+      let data = await fetch(url);
+      let parsedData = await data.json();
+      console.log(parsedData);
+
+      this.setState({
+        page: this.state.page + 1,
+        articles: parsedData.articles,
+      });
+    }
+  };
 
   render() {
     console.log("render");
@@ -43,6 +82,24 @@ export class News extends Component {
                 </div>
               );
             })}
+          </div>
+          {/* Another Container for previous and next page */}
+          <div className="container d-flex justify-content-between">
+            <button
+              disabled={this.state.page <= 1}
+              type="button"
+              class="btn btn-dark"
+              onClick={this.handlePrevClick}
+            >
+              &larr; Previous
+            </button>
+            <button
+              type="button"
+              class="btn btn-dark"
+              onClick={this.handleNextClick}
+            >
+              Next &rarr;
+            </button>
           </div>
         </div>
       </>
