@@ -14,7 +14,7 @@ export class News extends Component {
 
   // Creating a life cycle method
 
-  async componentDidMount() {
+  fetchData = async () => {
     let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=1&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
@@ -23,8 +23,19 @@ export class News extends Component {
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
     });
-  }
+  };
 
+  componentDidMount() {
+    this.fetchData();
+    // let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=1&pageSize=${this.props.pageSize}`;
+    // let data = await fetch(url);
+    // let parsedData = await data.json();
+    // console.log(parsedData);
+    // this.setState({
+    //   articles: parsedData.articles,
+    //   totalResults: parsedData.totalResults,
+    // });
+  }
   // Handle previous click
   handlePrevClick = async () => {
     let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=310c745e39d74141acf70d748b591d8d&page=${
