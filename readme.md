@@ -1,3 +1,3 @@
-# News Nerd Application
+# This is News Nerd Application
 
 ![Alt text](image.png)
